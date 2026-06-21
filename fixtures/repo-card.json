@@ -1,0 +1,12 @@
+{
+  "name": "Repo Launch Skill",
+  "oneLiner": "turns repo facts into launch material",
+  "problem": "a builder needs a quick credible walkthrough",
+  "command": "repo-launch fixtures/demo.json",
+  "outputs": [
+    "script beats",
+    "shot list",
+    "safety checklist"
+  ],
+  "sideEffects": "no posting or publishing"
+}
