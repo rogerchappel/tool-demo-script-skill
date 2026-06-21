@@ -1,0 +1,11 @@
+{
+  "name": "Connector Router",
+  "oneLiner": "chooses safe connector routes",
+  "problem": "an agent must plan tool use before writes",
+  "command": "connector-router fixtures/request.json",
+  "outputs": [
+    "route plan",
+    "approval notes"
+  ],
+  "sideEffects": "dry-run only"
+}
