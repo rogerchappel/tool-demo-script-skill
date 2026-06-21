@@ -1,0 +1,22 @@
+{
+  "name": "tool-demo-script-skill",
+  "version": "0.1.0",
+  "description": "Generate concise tool-demo scripts from repo metadata, CLI examples, and safety notes.",
+  "type": "commonjs",
+  "bin": {
+    "tool-demo-script": "bin/tool-demo-script.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/index.js && node --check bin/tool-demo-script.js",
+    "build": "node scripts/build.js",
+    "smoke": "node bin/tool-demo-script.js fixtures/repo-card.json"
+  },
+  "keywords": [
+    "agent-skill",
+    "dry-run",
+    "cli"
+  ],
+  "author": "Roger Chappel",
+  "license": "MIT"
+}
