@@ -7,6 +7,7 @@ Generate concise tool-demo scripts from repo metadata, CLI examples, and safety 
 ```bash
 npm test
 npm run smoke
+npm run release:check
 ```
 
 ## CLI
