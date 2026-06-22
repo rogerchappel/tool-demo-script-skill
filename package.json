@@ -10,7 +10,9 @@
     "test": "node --test",
     "check": "node --check src/index.js && node --check bin/tool-demo-script.js",
     "build": "node scripts/build.js",
-    "smoke": "node bin/tool-demo-script.js fixtures/repo-card.json"
+    "smoke": "node bin/tool-demo-script.js fixtures/repo-card.json",
+    "package:smoke": "npm pack --dry-run",
+    "release:check": "npm run check && npm run build && npm test && npm run smoke && npm run package:smoke"
   },
   "keywords": [
     "agent-skill",
@@ -18,5 +20,18 @@
     "cli"
   ],
   "author": "Roger Chappel",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogerchappel/tool-demo-script-skill.git"
+  },
+  "files": [
+    "bin",
+    "src",
+    "docs",
+    "fixtures",
+    "SKILL.md",
+    "README.md",
+    "LICENSE"
+  ]
 }
