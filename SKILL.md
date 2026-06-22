@@ -22,8 +22,9 @@ External writes require explicit approval outside this package. For connector or
 ```bash
 npm run smoke
 node bin/tool-demo-script.js fixtures/repo-card.json
+node bin/tool-demo-script.js fixtures/connector-card.json --format=markdown
 ```
 
 ## Validation workflow
 
-Run `npm test`, `npm run check`, `npm run build`, and `npm run smoke`. Save the JSON output as release evidence when preparing a PR.
+Run `npm test`, `npm run check`, `npm run build`, and `npm run smoke`. For release evidence, save both the JSON plan and a Markdown run of show, and confirm any invalid fixture exits nonzero before preparing a PR.

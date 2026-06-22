@@ -14,9 +14,17 @@ npm run release:check
 
 ```bash
 tool-demo-script fixtures/repo-card.json
+tool-demo-script fixtures/connector-card.json --minutes=5 --format=markdown
 ```
 
-The CLI prints JSON so agents can save evidence, compare fixture output, or pass plans to another local step.
+The CLI prints JSON by default so agents can save evidence, compare fixture output, or pass plans to another local step. Markdown output is available for release notes, video prep, and draft post material.
+
+## Output shape
+
+- `ok`: validation status for the source fixture.
+- `beats`: timed run-of-show entries with start and end seconds.
+- `artifactPlan`: local evidence the demo should show before launch.
+- `approvalGate`: actions that remain draft-only until explicitly approved.
 
 ## Safety notes
 
@@ -26,4 +34,4 @@ The CLI prints JSON so agents can save evidence, compare fixture output, or pass
 
 ## Limitations
 
-This MVP uses deterministic heuristics and fixture-backed tests. Adapter-specific execution, live API calls, and publishing workflows are intentionally out of scope.
+This MVP uses deterministic heuristics and fixture-backed tests. Adapter-specific execution, live API calls, generated media, and publishing workflows are intentionally out of scope.

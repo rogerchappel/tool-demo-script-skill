@@ -2,11 +2,12 @@
 
 ## Verification
 
-- `npm test`
-- `npm run check`
-- `npm run build`
-- `npm run smoke`
-- `bash scripts/validate.sh`
+- `npm test` - validates JSON, Markdown, and invalid-fixture exit behavior.
+- `npm run check` - syntax checks the CommonJS entrypoints.
+- `npm run build` - confirms package files are present.
+- `npm run smoke` - emits the fixture-backed JSON demo plan.
+- `node bin/tool-demo-script.js fixtures/connector-card.json --format=markdown` - emits release-note-friendly run of show.
+- `bash scripts/validate.sh` - runs the combined release validation script.
 
 ## Classification
 
