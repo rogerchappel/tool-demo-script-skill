@@ -35,3 +35,7 @@ The CLI prints JSON by default so agents can save evidence, compare fixture outp
 ## Limitations
 
 This MVP uses deterministic heuristics and fixture-backed tests. Adapter-specific execution, live API calls, generated media, and publishing workflows are intentionally out of scope.
+
+## Support
+
+Report public release-readiness issues at https://github.com/rogerchappel/tool-demo-script-skill/issues.
