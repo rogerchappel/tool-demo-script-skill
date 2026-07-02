@@ -39,3 +39,10 @@ This MVP uses deterministic heuristics and fixture-backed tests. Adapter-specifi
 ## Support
 
 Report public release-readiness issues at https://github.com/rogerchappel/tool-demo-script-skill/issues.
+
+## Install
+
+```bash
+npm install tool-demo-script-skill
+npx tool-demo-script --help
+```
