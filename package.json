@@ -11,7 +11,7 @@
     "check": "node --check src/index.js && node --check bin/tool-demo-script.js",
     "build": "node scripts/build.js",
     "smoke": "node bin/tool-demo-script.js fixtures/repo-card.json",
-    "package:smoke": "npm pack --dry-run",
+    "package:smoke": "node scripts/package-smoke.js",
     "release:check": "npm run check && npm run build && npm test && npm run smoke && npm run package:smoke"
   },
   "keywords": [
