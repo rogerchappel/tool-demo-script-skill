@@ -45,6 +45,15 @@ test('cli emits script JSON', () => {
   assert.match(parsed.title, /demo script/);
 });
 
+test('cli exposes help and version for package smoke checks', () => {
+  const help = execFileSync(process.execPath, ['bin/tool-demo-script.js', '--help'], { cwd: process.cwd(), encoding: 'utf8' });
+  assert.match(help, /Usage: tool-demo-script/);
+  assert.match(help, /--format=json\|markdown/);
+
+  const version = execFileSync(process.execPath, ['bin/tool-demo-script.js', '--version'], { cwd: process.cwd(), encoding: 'utf8' }).trim();
+  assert.match(version, /^\d+\.\d+\.\d+/);
+});
+
 test('cli emits markdown and validation exit codes', () => {
   const out = execFileSync(process.execPath, ['bin/tool-demo-script.js', 'fixtures/connector-card.json', '--format=markdown'], { cwd: process.cwd(), encoding: 'utf8' });
   assert.match(out, /## Shot List/);
