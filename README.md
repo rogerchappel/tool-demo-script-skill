@@ -15,9 +15,18 @@ npm run release:check
 ```bash
 tool-demo-script fixtures/repo-card.json
 tool-demo-script fixtures/connector-card.json --minutes=5 --format=markdown
+tool-demo-script --help
+tool-demo-script --version
 ```
 
 The CLI prints JSON by default so agents can save evidence, compare fixture output, or pass plans to another local step. Markdown output is available for release notes, video prep, and draft post material.
+
+### Options
+
+- `--minutes=N`: target runtime in minutes; values are rounded and clamped from 1 to 15.
+- `--format=json|markdown`: choose structured JSON for automation or Markdown for review.
+- `--help`: print the usage and option reference.
+- `--version`: print the package version.
 
 ## Output shape
 
