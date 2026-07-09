@@ -45,6 +45,15 @@ test('cli emits script JSON', () => {
   assert.match(parsed.title, /demo script/);
 });
 
+test('cli exposes help and rejects missing fixture input', () => {
+  const help = execFileSync(process.execPath, ['bin/tool-demo-script.js', '--help'], { cwd: process.cwd(), encoding: 'utf8' });
+  assert.match(help, /Usage: tool-demo-script/);
+
+  const result = spawnSync(process.execPath, ['bin/tool-demo-script.js'], { cwd: process.cwd(), encoding: 'utf8' });
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /Usage: tool-demo-script/);
+});
+
 test('cli emits markdown and validation exit codes', () => {
   const out = execFileSync(process.execPath, ['bin/tool-demo-script.js', 'fixtures/connector-card.json', '--format=markdown'], { cwd: process.cwd(), encoding: 'utf8' });
   assert.match(out, /## Shot List/);
