@@ -81,3 +81,14 @@ test('cli emits markdown and validation exit codes', () => {
   assert.equal(result.status, 2);
   assert.match(result.stdout, /missing oneLiner/);
 });
+
+test('cli rejects unsupported output formats', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['bin/tool-demo-script.js', 'fixtures/repo-card.json', '--format=yaml'],
+    { cwd: process.cwd(), encoding: 'utf8' }
+  );
+  assert.equal(result.status, 1);
+  assert.equal(result.stdout, '');
+  assert.match(result.stderr, /Unsupported format "yaml".*json or markdown/);
+});
