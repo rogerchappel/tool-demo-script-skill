@@ -13,9 +13,20 @@ test('builds a bounded demo script', () => {
   assert.ok(script.artifactPlan.some((item) => item.name === 'safety-note'));
 });
 
-test('honors requested runtime', () => {
-  const script = makeScript({ name: 'Connector Tool', oneLiner: 'routes actions safely' }, { minutes: 5 });
-  assert.equal(script.runtimeMinutes, 5);
+test('honors normalized runtimes exactly with positive beats', () => {
+  for (const minutes of [1, 3, 5, 15]) {
+    const script = makeScript({ name: 'Connector Tool', oneLiner: 'routes actions safely' }, { minutes });
+    assert.equal(script.runtimeMinutes, minutes);
+    assert.equal(script.beats.at(-1).endSecond, minutes * 60);
+    assert.ok(script.beats.every((beat) => beat.seconds > 0));
+  }
+});
+
+test('uses the clamped runtime for timing', () => {
+  const tooLong = makeScript({ name: 'Connector Tool', oneLiner: 'routes actions safely' }, { minutes: 99 });
+  const fractional = makeScript({ name: 'Connector Tool', oneLiner: 'routes actions safely' }, { minutes: 2.6 });
+  assert.equal(tooLong.beats.at(-1).endSecond, 15 * 60);
+  assert.equal(fractional.beats.at(-1).endSecond, 3 * 60);
 });
 
 test('validates required input', () => {
