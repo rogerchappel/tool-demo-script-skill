@@ -34,6 +34,19 @@ function makeRunOfShow(beats) {
   });
 }
 
+function allocateBeatSeconds(totalSeconds, weights) {
+  const weightTotal = weights.reduce((sum, weight) => sum + weight, 0);
+  const allocations = weights.map((weight) => Math.floor(totalSeconds * weight / weightTotal));
+  let remaining = totalSeconds - allocations.reduce((sum, seconds) => sum + seconds, 0);
+  const remainderOrder = weights
+    .map((weight, index) => ({ index, remainder: totalSeconds * weight % weightTotal }))
+    .sort((left, right) => right.remainder - left.remainder || left.index - right.index);
+  for (let index = 0; index < remaining; index += 1) {
+    allocations[remainderOrder[index].index] += 1;
+  }
+  return allocations;
+}
+
 function makeArtifactPlan(input) {
   return [
     { name: 'fixture', required: true, source: input.fixture || 'checked-in JSON fixture' },
@@ -49,12 +62,14 @@ function makeScript(input, options = {}) {
     return { ok: false, errors, sideEffects: 'No files, accounts, or external systems were changed.' };
   }
   const minutes = toPositiveMinutes(options.minutes || input.minutes || 3);
+  const [hookSeconds, problemSeconds, demoSeconds, safetySeconds, closeSeconds] =
+    allocateBeatSeconds(minutes * 60, [20, 30, 45, 25, 20]);
   const beats = [
-    { label: 'hook', seconds: 20, line: 'Today I am showing ' + input.name + ': ' + input.oneLiner + '.' },
-    { label: 'problem', seconds: 30, line: 'It helps when ' + (input.problem || 'an agent needs a repeatable workflow with evidence and safety checks') + '.' },
-    { label: 'demo', seconds: Math.max(45, minutes * 30), line: 'Run ' + (input.command || 'the CLI against a fixture') + ' and inspect ' + compactList(input.outputs, 'the generated output') + '.' },
-    { label: 'safety', seconds: 25, line: 'Side effects: ' + (input.sideEffects || 'dry-run by default; review before external writes') + '.' },
-    { label: 'close', seconds: 20, line: 'Try it locally with ' + (input.quickstart || 'npm test && npm run smoke') + '.' }
+    { label: 'hook', seconds: hookSeconds, line: 'Today I am showing ' + input.name + ': ' + input.oneLiner + '.' },
+    { label: 'problem', seconds: problemSeconds, line: 'It helps when ' + (input.problem || 'an agent needs a repeatable workflow with evidence and safety checks') + '.' },
+    { label: 'demo', seconds: demoSeconds, line: 'Run ' + (input.command || 'the CLI against a fixture') + ' and inspect ' + compactList(input.outputs, 'the generated output') + '.' },
+    { label: 'safety', seconds: safetySeconds, line: 'Side effects: ' + (input.sideEffects || 'dry-run by default; review before external writes') + '.' },
+    { label: 'close', seconds: closeSeconds, line: 'Try it locally with ' + (input.quickstart || 'npm test && npm run smoke') + '.' }
   ];
   const checklist = [
     'verify fixture command works',

@@ -23,15 +23,16 @@ The CLI prints JSON by default so agents can save evidence, compare fixture outp
 
 ### Options
 
-- `--minutes=N`: target runtime in minutes; values are rounded and clamped from 1 to 15.
-- `--format=json|markdown`: choose structured JSON for automation or Markdown for review.
+- `--minutes=N`: target runtime in minutes; values are rounded and clamped from 1 to 15. Positive whole-second beat durations are allocated proportionally and end exactly at the normalized target.
+- `--format=json|markdown`: choose structured JSON for automation or Markdown for review. Other values exit with an error.
 - `--help`: print the usage and option reference.
 - `--version`: print the package version.
 
 ## Output shape
 
 - `ok`: validation status for the source fixture.
-- `beats`: timed run-of-show entries with start and end seconds.
+- `runtimeMinutes`: normalized target runtime after rounding and clamping.
+- `beats`: timed run-of-show entries whose final `endSecond` matches the target runtime.
 - `artifactPlan`: local evidence the demo should show before launch.
 - `approvalGate`: actions that remain draft-only until explicitly approved.
 

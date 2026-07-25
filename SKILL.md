@@ -25,6 +25,8 @@ node bin/tool-demo-script.js fixtures/repo-card.json
 node bin/tool-demo-script.js fixtures/connector-card.json --format=markdown
 ```
 
+Use `--minutes=N` for a target of 1–15 whole minutes. The CLI rounds and clamps the value into that range, then proportionally times every beat so the final beat ends at the normalized target. Output format is either `json` (the default) or `markdown`.
+
 ## Validation workflow
 
-Run `npm test`, `npm run check`, `npm run build`, and `npm run smoke`. For release evidence, save both the JSON plan and a Markdown run of show, and confirm any invalid fixture exits nonzero before preparing a PR.
+Run `npm test`, `npm run check`, `npm run build`, and `npm run smoke`. For release evidence, save both the JSON plan and a Markdown run of show, and confirm invalid fixtures and unsupported formats exit nonzero before preparing a PR.

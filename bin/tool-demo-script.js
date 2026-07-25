@@ -25,6 +25,10 @@ function main(argv) {
   const minutes = minutesArg ? minutesArg.split('=')[1] : undefined;
   const formatArg = argv.find((arg) => arg.startsWith('--format='));
   const format = formatArg ? formatArg.split('=')[1] : 'json';
+  if (!['json', 'markdown'].includes(format)) {
+    console.error('Unsupported format "' + format + '". Use json or markdown.');
+    process.exit(1);
+  }
   const result = makeScript(readJson(file), { minutes });
   if (format === 'markdown') {
     console.log(renderMarkdown(result));
