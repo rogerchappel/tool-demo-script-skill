@@ -52,7 +52,19 @@ Report public release-readiness issues at https://github.com/rogerchappel/tool-d
 
 ## Install
 
+The package is not currently published to the npm registry. Build a tarball from a
+fresh clone, then install that artifact into your project:
+
 ```bash
-npm install tool-demo-script-skill
-npx tool-demo-script --help
+git clone https://github.com/rogerchappel/tool-demo-script-skill.git
+cd tool-demo-script-skill
+npm pack
+cd /path/to/your/project
+npm install /path/to/tool-demo-script-skill/tool-demo-script-skill-0.1.0.tgz
+npx --no-install tool-demo-script --help
+npx --no-install tool-demo-script --version
 ```
+
+The tarball name includes the version from `package.json`. `npm run
+package:smoke` performs the same pack, clean-project install, and CLI checks
+without modifying the repository.
