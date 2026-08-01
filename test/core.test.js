@@ -92,3 +92,65 @@ test('cli rejects unsupported output formats', () => {
   assert.equal(result.stdout, '');
   assert.match(result.stderr, /Unsupported format "yaml".*json or markdown/);
 });
+
+test('cli accepts options before or after the fixture', () => {
+  for (const args of [
+    ['--format=markdown', '--minutes=5', 'fixtures/repo-card.json'],
+    ['fixtures/repo-card.json', '--minutes=5', '--format=markdown']
+  ]) {
+    const result = spawnSync(process.execPath, ['bin/tool-demo-script.js', ...args], {
+      cwd: process.cwd(),
+      encoding: 'utf8'
+    });
+    assert.equal(result.status, 0);
+    assert.match(result.stdout, /Runtime: 5 minutes/);
+    assert.equal(result.stderr, '');
+  }
+});
+
+test('cli rejects unknown and malformed options', () => {
+  for (const [args, diagnostic] of [
+    [['fixtures/repo-card.json', '--bogus'], /Unknown option "--bogus"/],
+    [['fixtures/repo-card.json', '--format'], /Malformed option "--format"/],
+    [['fixtures/repo-card.json', '--format='], /Malformed option "--format="/],
+    [['fixtures/repo-card.json', '--minutes='], /Malformed option "--minutes="/],
+    [['fixtures/repo-card.json', '--minutes=soon'], /minutes must be a positive number/]
+  ]) {
+    const result = spawnSync(process.execPath, ['bin/tool-demo-script.js', ...args], {
+      cwd: process.cwd(),
+      encoding: 'utf8'
+    });
+    assert.equal(result.status, 1);
+    assert.equal(result.stdout, '');
+    assert.match(result.stderr, diagnostic);
+    assert.doesNotMatch(result.stderr, /\n\s+at /);
+  }
+});
+
+test('cli rejects extra positional arguments', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['bin/tool-demo-script.js', 'fixtures/repo-card.json', 'fixtures/connector-card.json'],
+    { cwd: process.cwd(), encoding: 'utf8' }
+  );
+  assert.equal(result.status, 1);
+  assert.equal(result.stdout, '');
+  assert.match(result.stderr, /Unexpected positional argument "fixtures\/connector-card.json"/);
+});
+
+test('cli reports fixture read and JSON errors without stack traces', () => {
+  for (const [fixture, diagnostic] of [
+    ['fixtures/missing-card.json', /Could not read fixture "fixtures\/missing-card.json"/],
+    ['package.json', null]
+  ]) {
+    const args = fixture === 'package.json' ? ['test/invalid-json.fixture'] : [fixture];
+    const result = spawnSync(process.execPath, ['bin/tool-demo-script.js', ...args], {
+      cwd: process.cwd(),
+      encoding: 'utf8'
+    });
+    assert.equal(result.status, 1);
+    assert.equal(result.stdout, '');
+    assert.match(result.stderr, diagnostic || /Fixture "test\/invalid-json.fixture" contains invalid JSON/);
+    assert.doesNotMatch(result.stderr, /\n\s+at /);
+  }
+});
