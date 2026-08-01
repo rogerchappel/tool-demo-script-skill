@@ -15,11 +15,15 @@ npm run release:check
 ```bash
 tool-demo-script fixtures/repo-card.json
 tool-demo-script fixtures/connector-card.json --minutes=5 --format=markdown
+tool-demo-script --format=markdown --minutes=5 fixtures/connector-card.json
 tool-demo-script --help
 tool-demo-script --version
 ```
 
 The CLI prints JSON by default so agents can save evidence, compare fixture output, or pass plans to another local step. Markdown output is available for release notes, video prep, and draft post material.
+Options may appear before or after the single fixture path. Unknown options,
+missing option values, extra positional arguments, and fixture read or JSON
+errors produce a concise diagnostic on stderr and exit with status 1.
 
 ### Options
 
