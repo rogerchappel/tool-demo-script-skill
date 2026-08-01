@@ -2,34 +2,84 @@
 const { makeScript, readJson, renderMarkdown } = require('../src');
 const { version } = require('../package.json');
 
+const usage = [
+  'Usage: tool-demo-script [options] <fixture.json>',
+  '',
+  'Options:',
+  '  --minutes=N             Target runtime, clamped from 1 to 15 minutes',
+  '  --format=json|markdown  Output JSON by default or Markdown for review',
+  '  --version               Print the package version',
+  '  --help                  Show this help'
+].join('\n');
+
+function fail(message) {
+  console.error(message);
+  process.exit(1);
+}
+
+function parseArguments(args) {
+  const options = { format: 'json' };
+  let file;
+
+  for (const arg of args) {
+    if (arg.startsWith('--minutes=')) {
+      const value = arg.slice('--minutes='.length);
+      if (!value) fail('Malformed option "' + arg + '". Expected --minutes=N.');
+      options.minutes = value;
+    } else if (arg.startsWith('--format=')) {
+      const value = arg.slice('--format='.length);
+      if (!value) fail('Malformed option "' + arg + '". Expected --format=json|markdown.');
+      options.format = value;
+    } else if (arg === '--minutes' || arg === '--format') {
+      fail('Malformed option "' + arg + '". Options require an = value.');
+    } else if (arg.startsWith('-')) {
+      fail('Unknown option "' + arg + '".');
+    } else if (file) {
+      fail('Unexpected positional argument "' + arg + '". Provide exactly one fixture.');
+    } else {
+      file = arg;
+    }
+  }
+
+  return { file, ...options };
+}
+
 function main(argv) {
   if (argv.includes('--version')) {
     console.log(version);
     process.exit(0);
   }
 
-  const file = argv[2];
-  if (!file || argv.includes('--help')) {
-    console.log([
-      'Usage: tool-demo-script <fixture.json> [--minutes=N] [--format=json|markdown]',
-      '',
-      'Options:',
-      '  --minutes=N             Target runtime, clamped from 1 to 15 minutes',
-      '  --format=json|markdown  Output JSON by default or Markdown for review',
-      '  --version               Print the package version',
-      '  --help                  Show this help'
-    ].join('\n'));
-    process.exit(file ? 0 : 1);
+  if (argv.includes('--help')) {
+    console.log(usage);
+    process.exit(0);
   }
-  const minutesArg = argv.find((arg) => arg.startsWith('--minutes='));
-  const minutes = minutesArg ? minutesArg.split('=')[1] : undefined;
-  const formatArg = argv.find((arg) => arg.startsWith('--format='));
-  const format = formatArg ? formatArg.split('=')[1] : 'json';
-  if (!['json', 'markdown'].includes(format)) {
-    console.error('Unsupported format "' + format + '". Use json or markdown.');
+
+  const { file, minutes, format } = parseArguments(argv.slice(2));
+  if (!file) {
+    console.log(usage);
     process.exit(1);
   }
-  const result = makeScript(readJson(file), { minutes });
+  if (!['json', 'markdown'].includes(format)) {
+    fail('Unsupported format "' + format + '". Use json or markdown.');
+  }
+
+  let input;
+  try {
+    input = readJson(file);
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      fail('Fixture "' + file + '" contains invalid JSON.');
+    }
+    fail('Could not read fixture "' + file + '": ' + error.message);
+  }
+
+  let result;
+  try {
+    result = makeScript(input, { minutes });
+  } catch (error) {
+    fail(error.message);
+  }
   if (format === 'markdown') {
     console.log(renderMarkdown(result));
   } else {

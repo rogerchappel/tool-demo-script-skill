@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Parse CLI options independently of fixture position and reject unknown or malformed arguments.
+- Report fixture read and JSON errors without internal stack traces.
 - Add explicit `--help` and `--version` CLI smoke coverage for release verification.
 - Document the CLI option surface in the README.
 
