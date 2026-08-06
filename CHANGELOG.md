@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Reject zero and negative runtime inputs instead of silently applying the default.
+- Return the standard validation result for null and non-object fixture roots.
 - Parse CLI options independently of fixture position and reject unknown or malformed arguments.
 - Report fixture read and JSON errors without internal stack traces.
 - Add explicit `--help` and `--version` CLI smoke coverage for release verification.

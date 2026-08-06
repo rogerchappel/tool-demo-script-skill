@@ -25,6 +25,11 @@ Options may appear before or after the single fixture path. Unknown options,
 missing option values, extra positional arguments, and fixture read or JSON
 errors produce a concise diagnostic on stderr and exit with status 1.
 
+Fixtures must contain a JSON object. A null, array, or primitive root produces
+the standard validation result (`ok: false` with an `errors` array) and exits
+with status 2. Runtime values supplied by either the fixture or `--minutes`
+must be positive; zero and negative values are rejected with status 1.
+
 ### Options
 
 - `--minutes=N`: target runtime in minutes; values are rounded and clamped from 1 to 15. Positive whole-second beat durations are allocated proportionally and end exactly at the normalized target.
