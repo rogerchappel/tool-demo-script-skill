@@ -5,7 +5,7 @@ function readJson(file) {
 }
 
 function toPositiveMinutes(value, fallback = 3) {
-  const minutes = Number(value || fallback);
+  const minutes = Number(value ?? fallback);
   if (!Number.isFinite(minutes) || minutes <= 0) {
     throw new Error('minutes must be a positive number');
   }
@@ -17,6 +17,9 @@ function compactList(items = [], fallback = 'local-first workflow') {
 }
 
 function validateDemoInput(input = {}) {
+  if (input === null || typeof input !== 'object' || Array.isArray(input)) {
+    return ['input must be an object'];
+  }
   const errors = [];
   if (!input.name) errors.push('missing name');
   if (!input.oneLiner) errors.push('missing oneLiner');
@@ -61,7 +64,7 @@ function makeScript(input, options = {}) {
   if (errors.length) {
     return { ok: false, errors, sideEffects: 'No files, accounts, or external systems were changed.' };
   }
-  const minutes = toPositiveMinutes(options.minutes || input.minutes || 3);
+  const minutes = toPositiveMinutes(options.minutes ?? input.minutes ?? 3);
   const [hookSeconds, problemSeconds, demoSeconds, safetySeconds, closeSeconds] =
     allocateBeatSeconds(minutes * 60, [20, 30, 45, 25, 20]);
   const beats = [
