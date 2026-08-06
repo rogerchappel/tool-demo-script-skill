@@ -36,10 +36,32 @@ test('validates required input', () => {
   assert.match(script.errors.join('\n'), /missing name/);
 });
 
+test('validates non-object input with the standard result shape', () => {
+  for (const input of [null, [], 'fixture', 42]) {
+    assert.deepEqual(validateDemoInput(input), ['input must be an object']);
+    assert.deepEqual(makeScript(input), {
+      ok: false,
+      errors: ['input must be an object'],
+      sideEffects: 'No files, accounts, or external systems were changed.'
+    });
+  }
+});
+
 test('bounds positive minutes', () => {
   assert.equal(toPositiveMinutes(99), 15);
   assert.equal(toPositiveMinutes(0.2), 1);
   assert.throws(() => toPositiveMinutes('never'), /positive number/);
+  for (const minutes of [0, -1]) {
+    assert.throws(() => toPositiveMinutes(minutes), /positive number/);
+    assert.throws(
+      () => makeScript({ name: 'Connector Tool', oneLiner: 'routes actions safely', minutes }),
+      /positive number/
+    );
+    assert.throws(
+      () => makeScript({ name: 'Connector Tool', oneLiner: 'routes actions safely' }, { minutes }),
+      /positive number/
+    );
+  }
 });
 
 test('renders markdown run of show', () => {
@@ -80,6 +102,38 @@ test('cli emits markdown and validation exit codes', () => {
   const result = spawnSync(process.execPath, ['bin/tool-demo-script.js', 'fixtures/invalid-card.json'], { cwd: process.cwd(), encoding: 'utf8' });
   assert.equal(result.status, 2);
   assert.match(result.stdout, /missing oneLiner/);
+});
+
+test('cli rejects zero minutes from options and fixtures', () => {
+  for (const args of [
+    ['fixtures/repo-card.json', '--minutes=0'],
+    ['fixtures/zero-minutes-card.json']
+  ]) {
+    const result = spawnSync(process.execPath, ['bin/tool-demo-script.js', ...args], {
+      cwd: process.cwd(),
+      encoding: 'utf8'
+    });
+    assert.equal(result.status, 1);
+    assert.equal(result.stdout, '');
+    assert.match(result.stderr, /minutes must be a positive number/);
+    assert.doesNotMatch(result.stderr, /\n\s+at /);
+  }
+});
+
+test('cli validates null and non-object fixture roots', () => {
+  for (const fixture of ['fixtures/null-card.json', 'fixtures/array-card.json']) {
+    const result = spawnSync(process.execPath, ['bin/tool-demo-script.js', fixture], {
+      cwd: process.cwd(),
+      encoding: 'utf8'
+    });
+    assert.equal(result.status, 2);
+    assert.equal(result.stderr, '');
+    assert.deepEqual(JSON.parse(result.stdout), {
+      ok: false,
+      errors: ['input must be an object'],
+      sideEffects: 'No files, accounts, or external systems were changed.'
+    });
+  }
 });
 
 test('cli rejects unsupported output formats', () => {
