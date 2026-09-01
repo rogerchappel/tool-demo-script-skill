@@ -67,6 +67,8 @@ fresh clone, then install that artifact into your project:
 ```bash
 git clone https://github.com/rogerchappel/tool-demo-script-skill.git
 cd tool-demo-script-skill
+npm ci
+npm run release:check
 npm pack
 cd /path/to/your/project
 npm install /path/to/tool-demo-script-skill/tool-demo-script-skill-0.1.0.tgz
@@ -74,6 +76,8 @@ npx --no-install tool-demo-script --help
 npx --no-install tool-demo-script --version
 ```
 
-The tarball name includes the version from `package.json`. `npm run
-package:smoke` performs the same pack, clean-project install, and CLI checks
-without modifying the repository.
+The committed lockfile makes `npm ci` a frozen install. The tarball name includes
+the version from `package.json`. `npm run package:smoke` performs the same pack
+and clean-project install, then runs the installed binary against a fixture from
+the packed artifact in both JSON and Markdown modes. These checks remain local,
+do not publish the package, and do not modify the repository.
