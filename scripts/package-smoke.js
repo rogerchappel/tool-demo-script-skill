@@ -1,5 +1,5 @@
 const { spawnSync } = require('node:child_process');
-const { mkdtempSync, readFileSync, rmSync, writeFileSync } = require('node:fs');
+const { copyFileSync, mkdtempSync, readFileSync, rmSync, writeFileSync } = require('node:fs');
 const { join } = require('node:path');
 const { tmpdir } = require('node:os');
 const { version } = require('../package.json');
@@ -51,6 +51,26 @@ try {
   });
 
   const cli = join(consumerDirectory, 'node_modules', '.bin', 'tool-demo-script');
+  const installedFixture = join(
+    consumerDirectory,
+    'node_modules',
+    'tool-demo-script-skill',
+    'fixtures',
+    'repo-card.json'
+  );
+  const fixture = join(consumerDirectory, 'repo-card.json');
+  copyFileSync(installedFixture, fixture);
+
+  const jsonOutput = JSON.parse(run(cli, [fixture], { cwd: consumerDirectory }));
+  if (jsonOutput.ok !== true || jsonOutput.title !== 'Repo Launch Skill demo script') {
+    throw new Error('package smoke failed: installed CLI did not parse the packed fixture as JSON');
+  }
+
+  const markdown = run(cli, [fixture, '--format=markdown'], { cwd: consumerDirectory });
+  if (!markdown.includes('# Repo Launch Skill demo script') || !markdown.includes('## Run Of Show')) {
+    throw new Error('package smoke failed: installed CLI did not render the packed fixture as Markdown');
+  }
+
   const help = run(cli, ['--help'], { cwd: consumerDirectory });
   if (!help.includes('Usage: tool-demo-script')) {
     throw new Error('package smoke failed: installed CLI --help omitted usage');
@@ -68,7 +88,7 @@ try {
     throw new Error('package smoke failed: installed artifact version did not match package.json');
   }
 
-  console.log(`package smoke passed: installed ${packageDetails.filename}; verified --help and --version`);
+  console.log(`package smoke passed: installed ${packageDetails.filename}; verified fixture JSON, Markdown, --help, and --version`);
 } finally {
   rmSync(temporaryDirectory, { recursive: true, force: true });
 }
