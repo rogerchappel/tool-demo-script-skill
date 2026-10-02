@@ -25,6 +25,7 @@ try {
   const [packageDetails] = JSON.parse(packOutput);
   const packagedFiles = new Set(packageDetails.files.map(({ path }) => path));
   const required = [
+    'package.json',
     'bin/tool-demo-script.js',
     'src/index.js',
     'fixtures/repo-card.json',
